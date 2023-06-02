@@ -1,0 +1,15 @@
+{
+  "extends": "./tsconfig.common.json",
+  "exclude": [
+    "./src/client",
+    "**/*.test.js*",
+    "**/*.test.ts*",
+    "**/__test__/**",
+    "**/__tests__/**"
+  ],
+  "compilerOptions": {
+    "outDir": "./server-dist",
+    "moduleResolution": "node",
+    "module": "commonjs"
+  }
+}

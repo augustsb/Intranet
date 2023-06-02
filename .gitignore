@@ -1,0 +1,17 @@
+.idea
+.eslintcache
+node_modules
+.DS_Store
+dist
+client-dist
+server-dist
+.vite/
+coverage/
+yarn-error.log
+src/server/srvconf-development.json
+!src/client/internationalisation/snapshots/.gitkeep
+/src/client/internationalisation/locale.xlsx
+/src/client/internationalisation/langs/**/translation.json
+/src/client/internationalisation/translation-map.json
+/src/client/internationalisation/snapshots*
+!/src/client/internationalisation/snapshots/.gitkeep

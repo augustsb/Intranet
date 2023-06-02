@@ -1,0 +1,17 @@
+version: '3'
+
+services:
+  database:
+    container_name: intranet_pg_container
+    image: postgres
+    restart: always
+    ports:
+      - '5437:5432'
+    volumes:
+      - pgdata:/data/db
+    environment:
+      POSTGRES_DB: intranet
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+
+volumes:
+  pgdata:

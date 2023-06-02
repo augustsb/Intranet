@@ -1,0 +1,17 @@
+# Proper handle of React Routes
+server {
+    listen ${PORT} default_server;
+
+    root /usr/share/nginx/html;
+    index index.html;
+
+    # /runtimeConfigStatic.js => $API_URL/runtimeConfigStatic.js
+    location /runtimeConfigStatic.js {
+        rewrite ^/runtimeConfigStatic.js$ ${API_URL}/runtimeConfigStatic.js redirect;
+    }
+
+    # Any route that doesn't have a file extension (e.g. /devices)
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+}

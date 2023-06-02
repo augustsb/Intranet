@@ -1,0 +1,1 @@
+SELECT value from example LIMIT 1;

@@ -1,0 +1,40 @@
+FROM oliasoftacr.azurecr.io/node:18.7.0-alpine AS build
+ARG NPM_TOKEN
+
+WORKDIR /usr/src/app
+
+RUN apk add --update git
+
+COPY . ./
+# Note the materialization of NPM_TOKEN here
+# Also note that we delete it just after npm install in the same layer
+# This is actually still insecure, but according to
+# https://www.alexandraulsh.com/2018/06/25/docker-npmrc-security/
+# it should be OK inside first stage of a multi stage build like here
+RUN cp .npmrc .npmrc-bak
+RUN echo '//gitlab.oliasoft.com/api/v4/packages/npm/:_authToken=${NPM_TOKEN}' >> .npmrc
+RUN yarn install --frozen-lockfile
+
+RUN yarn run server:build
+
+RUN yarn install --production --frozen-lockfile
+RUN rm -f .npmrc
+RUN mv .npmrc-bak .npmrc
+
+FROM oliasoftacr.azurecr.io/node:18.7.0-alpine AS runtime
+
+RUN apk update && apk add --upgrade zlib && apk add shadow
+
+# use non standard node user
+RUN groupadd --gid 1001090000 nodeid \
+  && useradd --no-log-init --uid 1001090000 --gid nodeid --shell /bin/bash --create-home nodeid
+# Run as non-root:
+USER nodeid
+COPY --from=build --chown=nodeid:nodeid /usr/src/app/node_modules /usr/src/app/node_modules
+COPY --from=build --chown=nodeid:nodeid /usr/src/app/server-dist /usr/src/app/server-dist
+COPY --from=build --chown=nodeid:nodeid /usr/src/app/package.json /usr/src/app/package.json
+
+WORKDIR /usr/src/app
+EXPOSE ${PORT}
+CMD [ "yarn", "server:prod:start" ]
+

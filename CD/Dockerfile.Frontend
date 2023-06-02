@@ -1,0 +1,48 @@
+FROM oliasoftacr.azurecr.io/node:18.7.0-alpine AS build
+ARG NPM_TOKEN
+
+WORKDIR /app
+
+RUN apk add --update git
+
+COPY . ./
+# Note the materialization of NPM_TOKEN here
+# Also note that we delete it just after npm install in the same layer
+# This is actually still insecure, but according to
+# https://www.alexandraulsh.com/2018/06/25/docker-npmrc-security/
+# it should be OK inside first stage of a multi stage build like here
+RUN cp .npmrc .npmrc-bak
+RUN echo '//gitlab.oliasoft.com/api/v4/packages/npm/:_authToken=${NPM_TOKEN}' >> .npmrc
+RUN yarn install --frozen-lockfile
+RUN rm -f .npmrc
+RUN mv .npmrc-bak .npmrc
+
+RUN yarn generate:translation:json
+RUN yarn run client:build
+
+FROM oliasoftacr.azurecr.io/nginx:stable-alpine AS runtime
+ARG PORT
+ENV PORT=${PORT:-9010}
+
+RUN apk update && apk add --upgrade pcre2 curl
+COPY --from=build --chown=nginx:nginx /app/client-dist /usr/share/nginx/html
+COPY --from=build --chown=nginx:nginx /app/CD/default.conf.template /etc/nginx/conf.d/
+COPY --from=build --chown=nginx:nginx /app/CD/docker-entrypoint.sh /
+RUN chmod +x ./docker-entrypoint.sh
+
+# implement changes required to run NGINX as an unprivileged user
+RUN cat /etc/nginx/nginx.conf \
+  | sed '/user\s\+\S\+;/d' \
+  | sed 's|/var/run/nginx.pid|/tmp/nginx.pid|' \
+  | tee /etc/nginx/nginx.conf
+
+RUN chown -R nginx:nginx /var/cache/nginx \
+    && chown -R nginx:nginx /var/log/nginx \
+    && chown -R nginx:nginx /etc/nginx/conf.d \
+    && chown -R nginx:nginx /usr/share/nginx/html
+
+USER nginx
+EXPOSE 9010
+ENTRYPOINT ["/docker-entrypoint.sh"]
+CMD ["nginx", "-g", "daemon off;"]
+
