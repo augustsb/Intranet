@@ -1,0 +1,5 @@
+{
+  "authentication_server_base_url": "https://login.test.oliasoft.com",
+  "use_ssl_for_authentication": true,
+  "api_base_url": "https://intranet.api.test.oliasoft.com"
+}
