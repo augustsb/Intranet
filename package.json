@@ -35,7 +35,7 @@
     "@oliasoft-open-source/node-postgresql-migrator": "^2.3.3",
     "@oliasoft-open-source/react-ui-library": "^3.5.1",
     "@oliasoft-open-source/units": "^2.6.2",
-    "@oliasoft/authentication": "2.0.4",
+    "@oliasoft/authentication": "2.0.5",
     "@oliasoft/translations": "^1.0.3",
     "@reduxjs/toolkit": "^1.9.5",
     "ajv": "^8.12.0",
