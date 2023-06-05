@@ -16,7 +16,8 @@ module.exports = {
     'plugin:import/recommended',
     'plugin:vitest-globals/recommended',
     'plugin:vitest/recommended',
-    'plugin:prettier/recommended',
+    'plugin:storybook/recommended',
+    'plugin:prettier/recommended'
   ],
   parser: '@typescript-eslint/parser',
   overrides: [],

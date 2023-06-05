@@ -19,3 +19,4 @@ src/server/srvconf-development.json
 src/server/srvconf-production.json
 src/server/srvconf-test.json
 src/client/internationalisation/**/*.json
+storybook-static/
