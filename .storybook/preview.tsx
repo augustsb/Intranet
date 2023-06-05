@@ -2,7 +2,7 @@
 import React from 'react';
 import { useDarkMode } from 'storybook-dark-mode';
 import '@oliasoft-open-source/react-ui-library/dist/global.css';
-import './storybook.less';
+import './storybook.css';
 
 export const decorators = [
   (Story) => {
