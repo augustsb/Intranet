@@ -5,7 +5,8 @@ module.exports = {
     es2021: true,
     'vitest-globals/env': true,
   },
-  extends: ['eslint:recommended',
+  extends: [
+    'eslint:recommended',
     'airbnb',
     'airbnb-typescript',
     'airbnb/hooks',
