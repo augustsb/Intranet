@@ -5,8 +5,7 @@ module.exports = {
     es2021: true,
     'vitest-globals/env': true,
   },
-  extends: [
-    'eslint:recommended',
+  extends: ['eslint:recommended',
     'airbnb',
     'airbnb-typescript',
     'airbnb/hooks',
@@ -16,7 +15,8 @@ module.exports = {
     'plugin:import/recommended',
     'plugin:vitest-globals/recommended',
     'plugin:vitest/recommended',
-    'plugin:prettier/recommended',
+    'plugin:storybook/recommended',
+    'plugin:prettier/recommended'
   ],
   parser: '@typescript-eslint/parser',
   overrides: [],
