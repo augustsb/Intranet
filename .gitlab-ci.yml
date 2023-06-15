@@ -116,9 +116,11 @@ cache:
   stage: imagescan
   variables:
     GIT_STRATEGY: none
-    TRIVY_USERNAME: "$AZURE_CLIENT_ID"
     TRIVY_AUTH_URL: "$IMAGE_REGISTRY_HOST"
   script:
+    - curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+    - az login --identity --username $AZURE_CLIENT_ID
+    - az acr login --name $IMAGE_REGISTRY_HOST
     - echo "Will start scanning of $FULL_IMAGE_NAME"
     - trivy --version
     # update vulnerabilities db:
