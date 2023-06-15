@@ -197,13 +197,13 @@ cache:
 #    - export TAG=$FULLIMAGENAME_FRONTEND
 #    - export LATESTTAG="$LATESTIMAGENAME_FRONTEND-mr-$CI_MERGE_REQUEST_IID"
 #
-#container_scanning_MR:frontend:
-#  extends:
-#    - .container_scanning
-#    - .mr_rules
-#  before_script:
-#    - export FULL_IMAGE_NAME="$FULLIMAGENAME_FRONTEND" # Needs override here
-#
+container_scanning_MR:frontend:
+  extends:
+    - .container_scanning
+    - .mr_rules
+  before_script:
+    - export FULL_IMAGE_NAME="$FULLIMAGENAME_FRONTEND" # Needs override here
+
 #container_scanning_release:frontend:
 #  extends: .container_scanning
 #  before_script:
