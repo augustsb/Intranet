@@ -52,8 +52,8 @@ This file is not committed to git, and contains config options.
 >Note: <br>
 In local environment you can have same database connection string, meaning one db user for both user and migrator.<br>
 However, in Test and Prod those are different users:<br>
-<em>Migrator user has all access in the database</sup><br>
-<em>Normal user has only CRUD operations access</sup>
+<em>Migrator user - has all access in the database</sup><br>
+<em>Normal user - has only CRUD operations access</sup>
 
 ### Generate translations
 
