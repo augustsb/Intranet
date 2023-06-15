@@ -1,0 +1,8 @@
+/**
+* Fix for Firefox story height bug
+*/
+@-moz-document url-prefix() {
+  .docs-story > div > div {
+    height: 100% !important;
+  }
+}

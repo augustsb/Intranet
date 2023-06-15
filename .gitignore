@@ -9,6 +9,7 @@ server-dist
 coverage/
 yarn-error.log
 src/server/srvconf-development.json
+storybook-static
 !src/client/internationalisation/snapshots/.gitkeep
 /src/client/internationalisation/locale.xlsx
 /src/client/internationalisation/langs/**/translation.json

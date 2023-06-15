@@ -5,3 +5,4 @@ server-dist/
 .trivycache/
 coverage/
 src/client/internationalisation/**/*.json
+storybook-static/

@@ -9,6 +9,9 @@ backend use TypeScript. The repo includes:
 - [Redux Toolkit](https://redux-toolkit.js.org/) for the frontend data layer, with a custom API middleware for HTTP 
 calls
 - [Vite](https://storybook.js.org/docs/react/builders/vite) for faster frontend builds
+- [Storybook](https://storybook.js.org/) for GUI component testing and documentation (configured with
+    [Vite support](https://storybook.js.org/blog/first-class-vite-support-in-storybook/))
+- Oliasoft's [translation package](https://gitlab.oliasoft.com/oliasoft/translation)
 - [Vitest](https://vitest.dev/config/) for unit testing (similar syntax to Jest)
 - [Express](https://expressjs.com/) for the server, which is built with
 [TSC](https://www.typescriptlang.org/docs/handbook/compiler-options.html)
@@ -113,6 +116,21 @@ command spins up static web server for testing the production build):
 ```bash
 yarn run client:build
 yarn run client:preview
+```
+
+### Storybook
+
+For testing and documenting reusable React components, use [Storybook](https://storybook.js.org/):
+
+```bash
+yarn storybook:dev
+```
+
+To build a static Storybook website (Storybook "production build"):
+
+```bash
+yarn storybook:build
+yarn storybook:preview
 ```
 
 ## Testing
