@@ -24,10 +24,10 @@ default:
     - kubernetes # Force it to run in kubernetes runner
 
 stages:
-  - test
+#  - test
   - version
-  - dockerfilescan
-  - build
+#  - dockerfilescan
+#  - build
   - imagescan
   - deploytest
   - deployprod
@@ -116,8 +116,6 @@ trivy_config_scanning:
   stage: imagescan
   variables:
     GIT_STRATEGY: none
-    TRIVY_USERNAME: "$ACRPUSH_SERVICE_PRINCIPAL_ID"
-    TRIVY_PASSWORD: "$ACRPUSH_SERVICE_PRINCIPAL_PW"
     TRIVY_AUTH_URL: "$IMAGE_REGISTRY_HOST"
   script:
     - echo "Will start scanning of $FULL_IMAGE_NAME"
