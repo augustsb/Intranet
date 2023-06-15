@@ -116,6 +116,7 @@ cache:
   stage: imagescan
   variables:
     GIT_STRATEGY: none
+    TRIVY_USERNAME: "$AZURE_CLIENT_ID"
     TRIVY_AUTH_URL: "$IMAGE_REGISTRY_HOST"
   script:
     - echo "Will start scanning of $FULL_IMAGE_NAME"
