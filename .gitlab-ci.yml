@@ -78,23 +78,23 @@ release-version:
     - if: '$CI_COMMIT_TAG'  #Don't run version job again if we just tagged the commit (which happened in a previous GitLab pipeline)
       when: never
 
-.build_container:
-  stage: build
-  image:
-    name: gcr.io/kaniko-project/executor:debug
-    entrypoint: [""]
-  script:
-    - echo "{\"auths\":{\"$IMAGE_REGISTRY_HOST\":{\"username\":\"$ACRPUSH_SERVICE_PRINCIPAL_ID\",\"password\":\"$ACRPUSH_SERVICE_PRINCIPAL_PW\"}}}" > /kaniko/.docker/config.json
-    - echo "$CI_PROJECT_DIR/$DOCKERFILE_PATH/$DOCKERFILE"
-    - >
-      /kaniko/executor
-      --cache
-      --context $CI_PROJECT_DIR
-      --dockerfile $CI_PROJECT_DIR/$DOCKERFILE_PATH/$DOCKERFILE
-      --destination $FULLIMAGENAME
-      --destination $LATESTIMAGENAME
-      --destination $TAG
-      --build-arg NPM_TOKEN=${CI_JOB_TOKEN}
+#.build_container:
+#  stage: build
+#  image:
+#    name: gcr.io/kaniko-project/executor:debug
+#    entrypoint: [""]
+#  script:
+#    - echo "{\"auths\":{\"$IMAGE_REGISTRY_HOST\":{\"username\":\"$ACRPUSH_SERVICE_PRINCIPAL_ID\",\"password\":\"$ACRPUSH_SERVICE_PRINCIPAL_PW\"}}}" > /kaniko/.docker/config.json
+#    - echo "$CI_PROJECT_DIR/$DOCKERFILE_PATH/$DOCKERFILE"
+#    - >
+#      /kaniko/executor
+#      --cache
+#      --context $CI_PROJECT_DIR
+#      --dockerfile $CI_PROJECT_DIR/$DOCKERFILE_PATH/$DOCKERFILE
+#      --destination $FULLIMAGENAME
+#      --destination $LATESTIMAGENAME
+#      --destination $TAG
+#      --build-arg NPM_TOKEN=${CI_JOB_TOKEN}
 
 #trivy_config_scanning:
 #  stage: dockerfilescan
@@ -172,179 +172,179 @@ release-version:
 # FRONTEND APPLICATION JOBS
 # **********************************************
 #
-build_release:frontend:
-  extends: .build_container
-  rules:
-    # Trigger on branches starting with "release-vNNN.YYY" something:
-    - if: '$CI_COMMIT_BRANCH =~ /^release-v\d+.\d+/'
-  before_script:
-    - 'export APP_VERSION=$(sed -nE ''s/^\s*"version": "(.*?)",$/\1/p'' ./package.json)'
-    - export DOCKERFILE="Dockerfile.Frontend"
-    - export FULLIMAGENAME=$FULLIMAGENAME_FRONTEND
-    - export LATESTIMAGENAME=$LATESTIMAGENAME_FRONTEND
-    - echo $APP_VERSION
-    - export TAG="$IMAGE_REGISTRY_HOST/$IMAGENAME_FRONTEND:$APP_VERSION"
-    - export LATESTTAG=$LATESTIMAGENAME_FRONTEND
-
-build_MR:frontend:
-  extends:
-    - .build_container
-    - .mr_rules
-  before_script:
-    - export DOCKERFILE="Dockerfile.Frontend"
-    - export FULLIMAGENAME=$FULLIMAGENAME_FRONTEND
-    - export LATESTIMAGENAME=$LATESTIMAGENAME_FRONTEND
-    - export TAG=$FULLIMAGENAME_FRONTEND
-    - export LATESTTAG="$LATESTIMAGENAME_FRONTEND-mr-$CI_MERGE_REQUEST_IID"
-
-container_scanning_MR:frontend:
-  extends:
-    - .container_scanning
-    - .mr_rules
-  before_script:
-    - export FULL_IMAGE_NAME="$FULLIMAGENAME_FRONTEND" # Needs override here
-
-container_scanning_release:frontend:
-  extends: .container_scanning
-  before_script:
-    - export APP_VERSION=$(jq -r '.version' ./package.json)
-    - echo $APP_VERSION
-    - export FULL_IMAGE_NAME="$IMAGE_REGISTRY_HOST/$IMAGENAME_FRONTEND:$APP_VERSION" # Needs override here
-  rules:
-    - if: '$CI_COMMIT_BRANCH =~ /^release-v\d+.\d+/'  # Only trigger on branches starting with "release-vNNN.YYY" something
-
-deploy_test:frontend:
-  image: oliasoftacr.azurecr.io/oliasoft/release-tools:$RELEASE_TOOLS_VERSION
-  stage: deploytest
-  resource_group: deploytest:frontend
-  before_script:
-    - export APP_VERSION=$(jq -r '.version' ./package.json)
-    - echo $APP_VERSION
-  script:
-    - |
-      release-tools deploy \
-        --dir='../gitops' \
-        --mkdir \
-        --repo='https://gitlab.oliasoft.com/oliasoft/gitops.git' \
-        --password="$GITLAB_PUSH_TOKEN" \
-        --branch='master' \
-        --author="$CI_COMMIT_AUTHOR" \
-        --email="$CI_COMMIT_AUTHOR" \
-        --yaml-file-in-gitops="apps/$APPLICATION_FRONTEND_NAME/overlays/test/kustomization.yaml" \
-        --imagetag="$APP_VERSION"
-  rules:
-    - if: '$CI_COMMIT_BRANCH =~ /^release-v\d+.\d+/'  # Only trigger on branches starting with "release-vNNN.YYY" something
-
-deploy_prod:frontend:
-  image: oliasoftacr.azurecr.io/oliasoft/release-tools:$RELEASE_TOOLS_VERSION
-  stage: deployprod
-  resource_group: deployprod:frontend
-  before_script:
-    - export APP_VERSION=$(jq -r '.version' ./package.json)
-    - echo $APP_VERSION
-  script:
-    - |
-      release-tools deploy \
-        --dir='../gitops' \
-        --mkdir \
-        --repo='https://gitlab.oliasoft.com/oliasoft/gitops.git' \
-        --password="$GITLAB_PUSH_TOKEN" \
-        --branch='master' \
-        --author="$CI_COMMIT_AUTHOR" \
-        --email="$CI_COMMIT_AUTHOR" \
-        --yaml-file-in-gitops="apps/$APPLICATION_FRONTEND_NAME/overlays/prod/kustomization.yaml" \
-        --imagetag="$APP_VERSION"
-  rules:
-    - if: '$CI_COMMIT_BRANCH =~ /^release-v\d+.\d+/'  # Only trigger on branches starting with "release-vNNN.YYY" something
-      when: manual
+#build_release:frontend:
+#  extends: .build_container
+#  rules:
+#    # Trigger on branches starting with "release-vNNN.YYY" something:
+#    - if: '$CI_COMMIT_BRANCH =~ /^release-v\d+.\d+/'
+#  before_script:
+#    - 'export APP_VERSION=$(sed -nE ''s/^\s*"version": "(.*?)",$/\1/p'' ./package.json)'
+#    - export DOCKERFILE="Dockerfile.Frontend"
+#    - export FULLIMAGENAME=$FULLIMAGENAME_FRONTEND
+#    - export LATESTIMAGENAME=$LATESTIMAGENAME_FRONTEND
+#    - echo $APP_VERSION
+#    - export TAG="$IMAGE_REGISTRY_HOST/$IMAGENAME_FRONTEND:$APP_VERSION"
+#    - export LATESTTAG=$LATESTIMAGENAME_FRONTEND
+#
+#build_MR:frontend:
+#  extends:
+#    - .build_container
+#    - .mr_rules
+#  before_script:
+#    - export DOCKERFILE="Dockerfile.Frontend"
+#    - export FULLIMAGENAME=$FULLIMAGENAME_FRONTEND
+#    - export LATESTIMAGENAME=$LATESTIMAGENAME_FRONTEND
+#    - export TAG=$FULLIMAGENAME_FRONTEND
+#    - export LATESTTAG="$LATESTIMAGENAME_FRONTEND-mr-$CI_MERGE_REQUEST_IID"
+#
+#container_scanning_MR:frontend:
+#  extends:
+#    - .container_scanning
+#    - .mr_rules
+#  before_script:
+#    - export FULL_IMAGE_NAME="$FULLIMAGENAME_FRONTEND" # Needs override here
+#
+#container_scanning_release:frontend:
+#  extends: .container_scanning
+#  before_script:
+#    - export APP_VERSION=$(jq -r '.version' ./package.json)
+#    - echo $APP_VERSION
+#    - export FULL_IMAGE_NAME="$IMAGE_REGISTRY_HOST/$IMAGENAME_FRONTEND:$APP_VERSION" # Needs override here
+#  rules:
+#    - if: '$CI_COMMIT_BRANCH =~ /^release-v\d+.\d+/'  # Only trigger on branches starting with "release-vNNN.YYY" something
+#
+#deploy_test:frontend:
+#  image: oliasoftacr.azurecr.io/oliasoft/release-tools:$RELEASE_TOOLS_VERSION
+#  stage: deploytest
+#  resource_group: deploytest:frontend
+#  before_script:
+#    - export APP_VERSION=$(jq -r '.version' ./package.json)
+#    - echo $APP_VERSION
+#  script:
+#    - |
+#      release-tools deploy \
+#        --dir='../gitops' \
+#        --mkdir \
+#        --repo='https://gitlab.oliasoft.com/oliasoft/gitops.git' \
+#        --password="$GITLAB_PUSH_TOKEN" \
+#        --branch='master' \
+#        --author="$CI_COMMIT_AUTHOR" \
+#        --email="$CI_COMMIT_AUTHOR" \
+#        --yaml-file-in-gitops="apps/$APPLICATION_FRONTEND_NAME/overlays/test/kustomization.yaml" \
+#        --imagetag="$APP_VERSION"
+#  rules:
+#    - if: '$CI_COMMIT_BRANCH =~ /^release-v\d+.\d+/'  # Only trigger on branches starting with "release-vNNN.YYY" something
+#
+#deploy_prod:frontend:
+#  image: oliasoftacr.azurecr.io/oliasoft/release-tools:$RELEASE_TOOLS_VERSION
+#  stage: deployprod
+#  resource_group: deployprod:frontend
+#  before_script:
+#    - export APP_VERSION=$(jq -r '.version' ./package.json)
+#    - echo $APP_VERSION
+#  script:
+#    - |
+#      release-tools deploy \
+#        --dir='../gitops' \
+#        --mkdir \
+#        --repo='https://gitlab.oliasoft.com/oliasoft/gitops.git' \
+#        --password="$GITLAB_PUSH_TOKEN" \
+#        --branch='master' \
+#        --author="$CI_COMMIT_AUTHOR" \
+#        --email="$CI_COMMIT_AUTHOR" \
+#        --yaml-file-in-gitops="apps/$APPLICATION_FRONTEND_NAME/overlays/prod/kustomization.yaml" \
+#        --imagetag="$APP_VERSION"
+#  rules:
+#    - if: '$CI_COMMIT_BRANCH =~ /^release-v\d+.\d+/'  # Only trigger on branches starting with "release-vNNN.YYY" something
+#      when: manual
 
 #
 # **********************************************
 # API APPLICATION JOBS
 # **********************************************
 #
-build_release:api:
-  extends: .build_container
-  rules:
-    # Trigger on branches starting with "release-vNNN.YYY" something:
-    - if: '$CI_COMMIT_BRANCH =~ /^release-v\d+.\d+/'
-  before_script:
-    - 'export APP_VERSION=$(sed -nE ''s/^\s*"version": "(.*?)",$/\1/p'' ./package.json)'
-    - export DOCKERFILE="Dockerfile.Api"
-    - export FULLIMAGENAME=$FULLIMAGENAME_API
-    - export LATESTIMAGENAME=$LATESTIMAGENAME_API
-    - echo $APP_VERSION
-    - export TAG="$IMAGE_REGISTRY_HOST/$IMAGENAME_API:$APP_VERSION"
-    - export LATESTTAG=$LATESTIMAGENAME_API
-
-build_MR:api:
-  extends:
-    - .build_container
-    - .mr_rules
-  before_script:
-    - export DOCKERFILE="Dockerfile.Api"
-    - export FULLIMAGENAME=$FULLIMAGENAME_API
-    - export LATESTIMAGENAME=$LATESTIMAGENAME_API
-    - export TAG=$FULLIMAGENAME_API
-    - export LATESTTAG="$LATESTIMAGENAME_API-mr-$CI_MERGE_REQUEST_IID"
-
-container_scanning_MR:api:
-  extends:
-    - .container_scanning
-    - .mr_rules
-  before_script:
-    - export FULL_IMAGE_NAME="$FULLIMAGENAME_API" # Needs override here
-
-container_scanning_release:api:
-  extends: .container_scanning
-  before_script:
-    - export APP_VERSION=$(jq -r '.version' ./package.json)
-    - echo $APP_VERSION
-    - export FULL_IMAGE_NAME="$IMAGE_REGISTRY_HOST/$IMAGENAME_API:$APP_VERSION" # Needs override here
-  rules:
-    - if: '$CI_COMMIT_BRANCH =~ /^release-v\d+.\d+/'  # Only trigger on branches starting with "release-vNNN.YYY" something
-
-deploy_test:api:
-  image: oliasoftacr.azurecr.io/oliasoft/release-tools:$RELEASE_TOOLS_VERSION
-  stage: deploytest
-  resource_group: deploytest:api
-  before_script:
-    - export APP_VERSION=$(jq -r '.version' ./package.json)
-    - echo $APP_VERSION
-  script:
-    - |
-      release-tools deploy \
-        --dir='../gitops' \
-        --mkdir \
-        --repo='https://gitlab.oliasoft.com/oliasoft/gitops.git' \
-        --password="$GITLAB_PUSH_TOKEN" \
-        --branch='master' \
-        --author="$CI_COMMIT_AUTHOR" \
-        --email="$CI_COMMIT_AUTHOR" \
-        --yaml-file-in-gitops="apps/$APPLICATION_API_NAME/overlays/test/kustomization.yaml" \
-        --imagetag="$APP_VERSION"
-  rules:
-    - if: '$CI_COMMIT_BRANCH =~ /^release-v\d+.\d+/'  # Only trigger on branches starting with "release-vNNN.YYY" something
-
-deploy_prod:api:
-  image: oliasoftacr.azurecr.io/oliasoft/release-tools:$RELEASE_TOOLS_VERSION
-  stage: deployprod
-  resource_group: deployprod:api
-  before_script:
-    - export APP_VERSION=$(jq -r '.version' ./package.json)
-    - echo $APP_VERSION
-  script:
-    - |
-      release-tools deploy \
-        --dir='../gitops' \
-        --mkdir \
-        --repo='https://gitlab.oliasoft.com/oliasoft/gitops.git' \
-        --password="$GITLAB_PUSH_TOKEN" \
-        --branch='master' \
-        --author="$CI_COMMIT_AUTHOR" \
-        --email="$CI_COMMIT_AUTHOR" \
-        --yaml-file-in-gitops="apps/$APPLICATION_API_NAME/overlays/prod/kustomization.yaml" \
-        --imagetag="$APP_VERSION"
-  rules:
-    - if: '$CI_COMMIT_BRANCH =~ /^release-v\d+.\d+/'  # Only trigger on branches starting with "release-vNNN.YYY" something
-      when: manual
+#build_release:api:
+#  extends: .build_container
+#  rules:
+#    # Trigger on branches starting with "release-vNNN.YYY" something:
+#    - if: '$CI_COMMIT_BRANCH =~ /^release-v\d+.\d+/'
+#  before_script:
+#    - 'export APP_VERSION=$(sed -nE ''s/^\s*"version": "(.*?)",$/\1/p'' ./package.json)'
+#    - export DOCKERFILE="Dockerfile.Api"
+#    - export FULLIMAGENAME=$FULLIMAGENAME_API
+#    - export LATESTIMAGENAME=$LATESTIMAGENAME_API
+#    - echo $APP_VERSION
+#    - export TAG="$IMAGE_REGISTRY_HOST/$IMAGENAME_API:$APP_VERSION"
+#    - export LATESTTAG=$LATESTIMAGENAME_API
+#
+#build_MR:api:
+#  extends:
+#    - .build_container
+#    - .mr_rules
+#  before_script:
+#    - export DOCKERFILE="Dockerfile.Api"
+#    - export FULLIMAGENAME=$FULLIMAGENAME_API
+#    - export LATESTIMAGENAME=$LATESTIMAGENAME_API
+#    - export TAG=$FULLIMAGENAME_API
+#    - export LATESTTAG="$LATESTIMAGENAME_API-mr-$CI_MERGE_REQUEST_IID"
+#
+#container_scanning_MR:api:
+#  extends:
+#    - .container_scanning
+#    - .mr_rules
+#  before_script:
+#    - export FULL_IMAGE_NAME="$FULLIMAGENAME_API" # Needs override here
+#
+#container_scanning_release:api:
+#  extends: .container_scanning
+#  before_script:
+#    - export APP_VERSION=$(jq -r '.version' ./package.json)
+#    - echo $APP_VERSION
+#    - export FULL_IMAGE_NAME="$IMAGE_REGISTRY_HOST/$IMAGENAME_API:$APP_VERSION" # Needs override here
+#  rules:
+#    - if: '$CI_COMMIT_BRANCH =~ /^release-v\d+.\d+/'  # Only trigger on branches starting with "release-vNNN.YYY" something
+#
+#deploy_test:api:
+#  image: oliasoftacr.azurecr.io/oliasoft/release-tools:$RELEASE_TOOLS_VERSION
+#  stage: deploytest
+#  resource_group: deploytest:api
+#  before_script:
+#    - export APP_VERSION=$(jq -r '.version' ./package.json)
+#    - echo $APP_VERSION
+#  script:
+#    - |
+#      release-tools deploy \
+#        --dir='../gitops' \
+#        --mkdir \
+#        --repo='https://gitlab.oliasoft.com/oliasoft/gitops.git' \
+#        --password="$GITLAB_PUSH_TOKEN" \
+#        --branch='master' \
+#        --author="$CI_COMMIT_AUTHOR" \
+#        --email="$CI_COMMIT_AUTHOR" \
+#        --yaml-file-in-gitops="apps/$APPLICATION_API_NAME/overlays/test/kustomization.yaml" \
+#        --imagetag="$APP_VERSION"
+#  rules:
+#    - if: '$CI_COMMIT_BRANCH =~ /^release-v\d+.\d+/'  # Only trigger on branches starting with "release-vNNN.YYY" something
+#
+#deploy_prod:api:
+#  image: oliasoftacr.azurecr.io/oliasoft/release-tools:$RELEASE_TOOLS_VERSION
+#  stage: deployprod
+#  resource_group: deployprod:api
+#  before_script:
+#    - export APP_VERSION=$(jq -r '.version' ./package.json)
+#    - echo $APP_VERSION
+#  script:
+#    - |
+#      release-tools deploy \
+#        --dir='../gitops' \
+#        --mkdir \
+#        --repo='https://gitlab.oliasoft.com/oliasoft/gitops.git' \
+#        --password="$GITLAB_PUSH_TOKEN" \
+#        --branch='master' \
+#        --author="$CI_COMMIT_AUTHOR" \
+#        --email="$CI_COMMIT_AUTHOR" \
+#        --yaml-file-in-gitops="apps/$APPLICATION_API_NAME/overlays/prod/kustomization.yaml" \
+#        --imagetag="$APP_VERSION"
+#  rules:
+#    - if: '$CI_COMMIT_BRANCH =~ /^release-v\d+.\d+/'  # Only trigger on branches starting with "release-vNNN.YYY" something
+#      when: manual
