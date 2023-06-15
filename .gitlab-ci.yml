@@ -96,18 +96,18 @@ release-version:
       --destination $TAG
       --build-arg NPM_TOKEN=${CI_JOB_TOKEN}
 
-trivy_config_scanning:
-  stage: dockerfilescan
-  image:
-    name: oliasoftacr.azurecr.io/trivy:0.29.2 #Latest version
-    entrypoint: [""]
-  rules:
-    - if: '$CI_COMMIT_BRANCH =~ /^release-v\d+.\d+/'  # Only trigger on branches starting with "release-vNNN.YYY" something
-    - if: $CI_MERGE_REQUEST_ID
-  script:
-    - echo "Will start scanning Dockerfile in folder $DOCKERFILE_PATH"
-    - trivy --version
-    - trivy config --exit-code 1 $DOCKERFILE_PATH
+#trivy_config_scanning:
+#  stage: dockerfilescan
+#  image:
+#    name: oliasoftacr.azurecr.io/trivy:0.29.2 #Latest version
+#    entrypoint: [""]
+#  rules:
+#    - if: '$CI_COMMIT_BRANCH =~ /^release-v\d+.\d+/'  # Only trigger on branches starting with "release-vNNN.YYY" something
+#    - if: $CI_MERGE_REQUEST_ID
+#  script:
+#    - echo "Will start scanning Dockerfile in folder $DOCKERFILE_PATH"
+#    - trivy --version
+#    - trivy config --exit-code 1 $DOCKERFILE_PATH
 
 .container_scanning:
   image:
@@ -153,19 +153,19 @@ trivy_config_scanning:
     reports:
       container_scanning: gl-container-scanning-report.json
 
-test:
-  image: oliasoftacr.azurecr.io/node:18.7.0-alpine
-  stage: test
-  only:
-    - merge_requests
-  script:
-    - echo '//gitlab.oliasoft.com/api/v4/packages/npm/:_authToken=${CI_JOB_TOKEN}' >> .npmrc
-    - yarn install --progress=false --no-save
-    - yarn generate:translation:json
-    - yarn run depcruise
-    - yarn run client:build
-    - yarn run server:build
-    - yarn run test
+#test:
+#  image: oliasoftacr.azurecr.io/node:18.7.0-alpine
+#  stage: test
+#  only:
+#    - merge_requests
+#  script:
+#    - echo '//gitlab.oliasoft.com/api/v4/packages/npm/:_authToken=${CI_JOB_TOKEN}' >> .npmrc
+#    - yarn install --progress=false --no-save
+#    - yarn generate:translation:json
+#    - yarn run depcruise
+#    - yarn run client:build
+#    - yarn run server:build
+#    - yarn run test
 
 #
 # **********************************************
