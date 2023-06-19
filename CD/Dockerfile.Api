@@ -3,7 +3,7 @@ ARG NPM_TOKEN
 
 WORKDIR /usr/src/app
 
-RUN apk add --update git
+RUN apk add --no-cache --update git
 
 COPY . ./
 # Note the materialization of NPM_TOKEN here
@@ -23,7 +23,7 @@ RUN mv .npmrc-bak .npmrc
 
 FROM oliasoftacr.azurecr.io/node:18.7.0-alpine AS runtime
 
-RUN apk update && apk add --upgrade zlib && apk add shadow
+RUN apk update && apk add --no-cache --upgrade zlib && apk add --no-cache shadow
 
 # use non standard node user
 RUN groupadd --gid 1001090000 nodeid \
