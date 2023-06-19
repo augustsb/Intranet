@@ -3,7 +3,7 @@ ARG NPM_TOKEN
 
 WORKDIR /app
 
-RUN apk add --update git
+RUN apk add --no-cache --update git
 
 COPY . ./
 # Note the materialization of NPM_TOKEN here
@@ -24,7 +24,7 @@ FROM oliasoftacr.azurecr.io/nginx:stable-alpine AS runtime
 ARG PORT
 ENV PORT=${PORT:-9010}
 
-RUN apk update && apk add --upgrade pcre2 curl
+RUN apk update && apk add --no-cache --upgrade pcre2 curl
 COPY --from=build --chown=nginx:nginx /app/client-dist /usr/share/nginx/html
 COPY --from=build --chown=nginx:nginx /app/CD/default.conf.template /etc/nginx/conf.d/
 COPY --from=build --chown=nginx:nginx /app/CD/docker-entrypoint.sh /
