@@ -12858,10 +12858,10 @@ vite-node@0.31.1:
     picocolors "^1.0.0"
     vite "^3.0.0 || ^4.0.0"
 
-vite-plugin-htmlx@^1.0.2:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/vite-plugin-htmlx/-/vite-plugin-htmlx-1.0.2.tgz#0d3dc0129507422572287db904612d007d5bb2d7"
-  integrity sha512-snt+ZElKB5ZkZUFdQyrd5Y8iE5TwpBDO+/7wXtipVo2QWtTzxsbMyjqcY/Abu0vcuCE5hPlYjiSXfg6fuaw/cg==
+vite-plugin-htmlx@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/vite-plugin-htmlx/-/vite-plugin-htmlx-1.0.3.tgz#dca100e81a074e25a430086fd5171dce3e95df0a"
+  integrity sha512-In2QIgwYRnklWdPmuqpiJfKWpqngof75ev2e54KKNUbnG5himMv1LF0uCZz3Q/axGfICIx+MV7Zjm/YWpV68wA==
   dependencies:
     connect-history-api-fallback "^2.0.0"
     ejs "^3.1.9"
